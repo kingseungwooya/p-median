@@ -2,11 +2,19 @@ from gurobipy import *
 import numpy as np
 import matplotlib.pyplot as plt
 from itertools import product
+from dotenv import load_dotenv
+import os
+
+# load .env
+load_dotenv()
+
+GUROBI_LICENSE_KEY = os.environ.get('GRUOBI_LICENSE')
+Env(GUROBI_LICENSE_KEY)
 
 def generate_grid_points(grid_shape):
     grid_size = grid_shape[0] * grid_shape[1]
     grid = list(product(list(range(grid_shape[0])), repeat=2))
-    print(grid)
+    # print(grid)
     grid = np.array(grid)
     return grid, grid_size
 
@@ -40,7 +48,7 @@ def solve_P_Median(ST_points, grid_points, flow, P):
     ST_index = range(len(ST_points))
     vertex_index = range(len(grid_points))
     position = [(i, j) for i in ST_index for j in vertex_index]
-    print(position)
+
     distance_matrix = generate_distance_matrix(ST_points, grid_points)
 
     model = Model('P-Median')
@@ -103,7 +111,7 @@ def main():
     flow = list(np.random.randint(low=1, high=5, size=N))
 
 
-    grid_shape = (10, 10)
+    grid_shape = (1000, 1000)
     grid_points, grid_size = generate_grid_points(grid_shape)
 
     # P value
