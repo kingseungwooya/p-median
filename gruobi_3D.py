@@ -15,7 +15,6 @@ def generate_grid_points(grid_shape):
     grid_size = grid_shape[0] * grid_shape[1] * grid_shape[2]
     grid = list(product(list(range(grid_shape[0])), repeat=3))
     grid = np.array(grid)
-    # print(grid)
     return grid, grid_size
 
 def generate_distance_matrix(ST_points, grid_points):
@@ -30,26 +29,54 @@ def generate_distance_matrix(ST_points, grid_points):
 
 
 def draw_graph(ST_points, flow, grid_points, supernodesInVertex, node_to_supernode):
-    fig = plt.figure(figsize=(10, 7))
+    fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111, projection='3d')
 
-    # ST points 그리기
-    ax.scatter(ST_points[:, 0], ST_points[:, 1], ST_points[:, 2], color='blue')
+    # 처음 10개의 점을 파란색으로 그리기
+    ax.scatter(ST_points[:10, 0], ST_points[:10, 1], ST_points[:10, 2], color='blue')
+
+    # 나머지 점을 빨간색으로 그리기
+    ax.scatter(ST_points[10:, 0], ST_points[10:, 1], ST_points[10:, 2], color='red')
 
     # Supernodes 그리기
     for n in supernodesInVertex:
-        ax.scatter(grid_points[n, 0], grid_points[n, 1], grid_points[n, 2], color='green', marker='D', s=150)
+        # ax.scatter(grid_points[n, 0], grid_points[n, 1], grid_points[n, 2], color='green', marker='o', s=150)
+        ax.scatter(grid_points[n, 0], grid_points[n, 1], 9, color='green', marker='o', s=150)
 
     # Node_to_supernode 연결선 그리기
     for n in node_to_supernode:
         i, j = n
+        # ax.plot([ST_points[i, 0], grid_points[j, 0]], [ST_points[i, 1], grid_points[j, 1]],
+        #         [ST_points[i, 2], grid_points[j, 2]], color='black')
         ax.plot([ST_points[i, 0], grid_points[j, 0]], [ST_points[i, 1], grid_points[j, 1]],
-                [ST_points[i, 2], grid_points[j, 2]], color='black')
+                [ST_points[i, 2], 9], color='black')
 
+    # Super Node 끼리 연결선 그리기
+    print("supernode index들")
+    print(supernodesInVertex)
+    for i in range(len(supernodesInVertex)):
+
+        try:
+            index1 = i
+            index2 = -i
+            src_sn_point = grid_points[supernodesInVertex[i]]
+            sink_sn_point = grid_points[supernodesInVertex[i+2]]
+            print(src_sn_point[0])
+
+            ax.plot([src_sn_point[0], sink_sn_point[0]],[src_sn_point[1], sink_sn_point[1]],
+                    [9, 9], color='green', lw=5)
+        except IndexError:
+            continue
+
+    # ax.view_init(0, 60)
     ax.set_xlabel('X axis')
     ax.set_ylabel('Y axis')
     ax.set_zlabel('Z axis')
-    ax.set_title('Nodes')
+    # 축 범위 설정
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 10)
+    ax.set_zlim(0, 10)
+    ax.set_title('Tray Way Structure')
     ax.grid()
 
     plt.show()
@@ -112,7 +139,7 @@ def read_coords(path):
 
 def main():
 
-    N = 10
+    N = 20
     # ST_points = np.random.randint(low=0, high=10, size=(N, 2))
 
     ST_points = read_coords("coord3D.txt")
@@ -126,7 +153,7 @@ def main():
     grid_points, grid_size = generate_grid_points(grid_shape)
 
     # P value
-    P = 2
+    P = 4
 
     supernodesInVertex, node_to_supernode = solve_P_Median(ST_points, grid_points, flow, P)
 
