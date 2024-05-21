@@ -120,11 +120,15 @@ def solve_P_Median(ST_points, grid_points, flow, P):
     )
 
     model.optimize()
-
+    print("ZZZZZ")
+    # print(z)
     supernodesInVertex = [k for k in vertex_index if y[k].x == 1]
     node_to_supernode = [k for k in position if z[k].x == 1]
     print(supernodesInVertex)
     print(node_to_supernode)
+    print(node_to_supernode[1][0])
+    print(node_to_supernode[2])
+
     return supernodesInVertex, node_to_supernode
 
 
@@ -158,7 +162,7 @@ def main():
     supernodesInVertex, node_to_supernode = solve_P_Median(ST_points, grid_points, flow, P)
 
 
-    draw_graph(ST_points, flow, grid_points, supernodesInVertex, node_to_supernode)
+    # draw_graph(ST_points, flow, grid_points, supernodesInVertex, node_to_supernode)
 
 if __name__ == "__main__":
     main()
